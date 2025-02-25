@@ -20,6 +20,9 @@ RUN set -x \
     && git checkout ${ZM_VERSION} \
     && git submodule update --init --recursive
 
+COPY non-increasing-dts.patch .
+RUN git apply non-increasing-dts.patch
+
 COPY parse_control.py .
 
 # This parses the control file located at distros/ubuntu2004/control
@@ -296,5 +299,7 @@ LABEL \
     com.github.alexyao2015.zoneminder_version=${ZM_VERSION}
 
 EXPOSE 80/tcp
+
+RUN sed -i 's/www-data/root/g' /etc/services.d/zoneminder/run
 
 CMD ["/init"]
